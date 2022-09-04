@@ -233,17 +233,24 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
             
         
-        xyp=self.hyperbola(0.000000002,0,1,0,0,10,60)
+        xyp=self.hyperbola(0,0,1,0,0,10,60)
         self.axes.plot(xyp[0, :],xyp[1, :],linestyle='solid',color='blue',picker=5, label="a",pickradius=10)
-        xyp=self.hyperbola(0.000000003,0,0,0,1,10,60)
+        xyp=self.hyperbola(0,0,0,0,1,10,60)
         self.axes.plot(xyp[0, :],xyp[1, :],linestyle='solid',color='pink',picker=5, label="b",pickradius=10)
-        xyp=self.hyperbola(0.000000004,0,1,1,0,10,60)
+        xyp=self.hyperbola(0,0,1,1,0,10,60)
         self.axes.plot(xyp[0, :],xyp[1, :],linestyle='solid',color='black',picker=5, label="c",pickradius=10)
         self.axes.scatter(x1,y1)
         
         
+        def on_press(event):
+            print('press', event.key)
+            if event.key == 'a':
+                event.artist.set_color("blue") #for greying out the selected lines
+                event.artist.set_picker(True) #cannot be selected again
+                self.view.figure.canvas.draw()
+
                
-    
+        
         def on_pick(event):
             self.lineEdit_2.clear()
             self.lineEdit_4.clear()
@@ -253,10 +260,13 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             event.artist.set_color("grey") #for greying out the selected lines
             event.artist.set_picker(False) #cannot be selected again
             self.view.figure.canvas.draw()
-            
-
-        self.view.figure.canvas.mpl_connect('pick_event', on_pick)
         
+       
+            
+                
+
+        self.view.figure.canvas.mpl_connect('pick_event', on_pick)  
+        self.view.figure.canvas.mpl_connect('key_press_event', on_press)      
         
         
         def add_evt(event):
@@ -285,14 +295,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.view.figure.canvas.mpl_connect('pick_event',add_evt)
         self.view.figure.canvas.mpl_connect('button_release_event',groupbylist)
     
-    
-    
-    
+
     
     def save_pos(self):
         global a
         
-        self.file1 = open('input.txt', 'w')
+        self.file1 = open('output.txt', 'a')
         # self.file1.write("source",self.i,"->",a, "position:",x_cord,",", y_cord)
         self.file1.write("source ")
         self.file1.write(str(self.i))
@@ -303,6 +311,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.file1.write(str(x_cord))
         self.file1.write(" ")
         self.file1.write(str( y_cord))
+        self.file1.write(str( "\n"))
         self.file1.close()
         self.print_source.clear()
         
@@ -390,63 +399,3 @@ if __name__ == "__main__":
 
 
 
-
-
-
-
-
-
-# import tkinter as tk
-# from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-# from matplotlib.lines import Line2D
-# from tkinter import messagebox
-
-# # graph pick event
-# def pickLine2D(event):
-#     print('pick evnet')
-#     global lines
-#     artist = event.artist
-#     if isinstance(artist, Line2D):
-#         if artist in lines:
-#             idx = lines.index(artist)
-#             print(f'line idx : {idx}')
-
-# # close window
-# def _windowDestroy(root):
-#     root.quit()
-#     root.destroy()
-
-# root = tk.Tk()
-# root.geometry('700x500')
-# root.title('graph window')
-# root.protocol('WM_DELETE_WINDOW', lambda root=root: _windowDestroy(root))
-
-# f = tk.Frame(root)
-# f.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-
-# # data of graph
-# N = 2
-# M = 10
-# x = np.arange(M)
-# np.random.seed(seed=0)
-# lines = []
-
-# # set graph
-# fig = plt.figure(figsize=(4, 4))
-# cvs = FigureCanvasTkAgg(fig, f)
-# toolbar = NavigationToolbar2Tk(cvs, f)
-# cvs.get_tk_widget().pack(fill=tk.BOTH, expand=True)
-
-# # set lien2D
-# ax = fig.add_subplot(111)
-# for i in range(N):
-#     _y = np.random.rand(M)
-#     line = Line2D(x, _y, picker=True, pickradius=10)
-#     lines.append(line)
-#     ax.add_line(line)
-# ax.set_xlim((-0.5, M + 0.5))
-# ax.set_ylim((0, 1.5))
-
-# fig.canvas.mpl_connect('pick_event', pickLine2D)
-
-# root.mainloop()
