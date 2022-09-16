@@ -1,6 +1,0 @@
-source 1 ['c']position: 6.71 7.41
-source 2 ['b']position: 4.11 0.52
-source 3 ['a']position: 0.51 7.54
-source 1 ['a', 'b', 'c']position: 0.56 0.63
-source 1 ['b']position: 5.38 0.77
-source 2 ['a', 'c']position: 0.57 0.77
