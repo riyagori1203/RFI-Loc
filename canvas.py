@@ -238,7 +238,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             
             self.lineEdit_2.clear()
             self.lineEdit_4.clear()
-            
+            self.a.append(event.artist.get_label())
             # print (event.artist.get_label(),"clicked")
             # event.artist.set_visible(not event.artist.get_visible())    (for making selected lines invisible)
             event.artist.set_color("lightgrey") #for greying out the selected lines
@@ -254,8 +254,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.view.figure.canvas.mpl_connect('key_press_event', on_press)      
         
         
-        def add_evt(event):
-            self.a.append(event.artist.get_label())
+        # def add_evt(event):
+        #     self.a.append(event.artist.get_label())
     # print(a)
         def groupbylist(event): 
             if (self.view.figure.canvas.cursor().shape())==0:
@@ -278,7 +278,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 self.lineEdit_4.insert(str(round(event.ydata,2)))
                 
                 self.a.clear()
-        self.view.figure.canvas.mpl_connect('pick_event',add_evt)
+        # self.view.figure.canvas.mpl_connect('pick_event',add_evt)
         self.view.figure.canvas.mpl_connect('button_release_event',groupbylist)
     
 
@@ -392,3 +392,4 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
+
