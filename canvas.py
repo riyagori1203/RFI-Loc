@@ -234,7 +234,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             baseline=delay_dict['baseline'][i]
             ant2=(baseline - 65536) % 2048 - 1
             ant1 = ((baseline - 65536) - (ant2 + 1))//2048 -1
-            xyp=self.hyperbola(delay_dict['delay'][i],pos_dict[ant1][0],pos_dict[ant1][1],pos_dict[ant2][0],pos_dict[ant2][1],15000,500) #self,delay_s, x0,x1,y0,y1, range, pts
+            xyp=self.hyperbola(delay_dict['delay'][i],pos_dict[ant1][0],pos_dict[ant1][1],pos_dict[ant2][0],pos_dict[ant2][1],15000,1000) #self,delay_s, x0,x1,y0,y1, range, pts
             strength = delay_dict['amplitude'][i]
             self.axes.plot(xyp[0, :],xyp[1, :],c=viridis_r(norm(strength)), lw=1, linestyle='solid',picker=5, label=i,pickradius=5)
         self.view.figure.canvas.draw()     
@@ -373,11 +373,17 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         # rotate to p1 -> p0 angle.
         rot = np.array([[np.cos(angle), np.sin(angle)], [-np.sin(angle), np.cos(angle)]])
-        xyp = np.matmul(rot, xy)
+
+        xyp = np.zeros_like(xy)
+
+        xyp[0:2,:] = np.matmul(rot, xy[0:2,:])
+
+        xyp[2,:] = xy[2,:] # copy weights
 
         # shift origin to p0
         xyp[0, :] += x0
         xyp[1, :] += y0
+
         return xyp
         # print(xyp)
         
@@ -390,7 +396,11 @@ def cartesian_hyperbola(c, a, range, pts):
     y = np.linspace(-range, range, pts, endpoint=True)
     b = np.sqrt(abs(c ** 2 - a ** 2))
     x = a * np.sqrt(1 + y ** 2 / b ** 2)
-    return np.vstack([x, y])
+    d1 = np.sqrt(y**2+(x-c)**2) # distance from one focus
+    d2 = np.sqrt(y**2+(x+c)**2) # distance from other focus
+    scaling_factor = 25E6 # assume a typical distance scale of 5000m
+    w = scaling_factor/(d1*d2)
+    return np.vstack([x, y, w])
 
 
 if __name__ == "__main__":
