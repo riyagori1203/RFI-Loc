@@ -44,6 +44,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.axes = self.view.figure.subplots()
         self.axes.set_aspect('equal')
         self.axes.set_box_aspect(1)
+        self.axes.set_xlim([-1E4,1E4])
+        self.axes.set_ylim([-1E4,1E4])
         i=0
         self.a=[]
         self.print_source=[]
