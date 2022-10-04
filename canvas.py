@@ -18,6 +18,7 @@ from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 from matplotlib.cm import viridis_r
 from matplotlib.colors import Normalize
+import json
 
 try:
     import matplotlib.backends.backend_qtagg as qtbk
@@ -321,7 +322,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                         
                         writeData = self.finalList
                 file = open(dialog.selectedFiles()[0], 'w')
-                file.write(str(writeData))
+                file.write(json.dumps(writeData))
                 file.close()
         self.print_source.clear()
         
