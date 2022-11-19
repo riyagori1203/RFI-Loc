@@ -1,4 +1,6 @@
 
+from PyQt5 import QtCore, QtGui, QtWidgets
+
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 import numpy as np
@@ -7,6 +9,7 @@ from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 from matplotlib.cm import viridis_r
 from matplotlib.colors import Normalize
+import json
 
 try:
     import matplotlib.backends.backend_qtagg as qtbk
@@ -23,55 +26,66 @@ except ModuleNotFoundError as e:
     print("Could not import qt5agg. Quitting!")
     sys.exit()
 
+
 class Ui_MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
-        self.view = FigureCanvas(Figure(figsize=(5, 5)))
-        
-        self.toolbar=qtbk.NavigationToolbar2QT(self.view,self)
+        self.view = FigureCanvas(Figure(figsize=(8, 5.5)))
+
+        self.toolbar = qtbk.NavigationToolbar2QT(self.view, self)
         MainWindow.addToolBar(self.toolbar)
         self.axes = self.view.figure.subplots()
         self.axes.set_aspect('equal')
         self.axes.set_box_aspect(1)
-        i=0
-        self.a=[]
-        self.print_source=[]
+        self.axes.set_xlim([-1E4, 1E4])
+        self.axes.set_ylim([-1E4, 1E4])
+        i = 0
+        self.a = []
+        self.print_source = []
         self.SPEED_OF_LIGHT = 2.99792458e8
-        self.filepath=""
-        self.sourceList=list()
-        self.finalList=list()
-        
-        self.localList=list()
-        
-        
-        
-        
+        self.filepath = ""
+        self.sourceList = list()
+        self.finalList = list()
+
+        self.localList = list()
+
     def setupUi(self, MainWindow):
-        self.file_path=""
+        self.file_path = ""
         MainWindow.setObjectName("MainWindow")
-        MainWindow.setFixedWidth(1152)
-        MainWindow.setFixedHeight(625) 
-        
+        MainWindow.setFixedSize(1151, 679)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            MainWindow.sizePolicy().hasHeightForWidth())
+        MainWindow.setSizePolicy(sizePolicy)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.centralwidget)
-        
         self.gridLayout_4.setObjectName("gridLayout_4")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout_4.addItem(spacerItem, 0, 0, 1, 1)
         self.gridLayout_3 = QtWidgets.QGridLayout()
         self.gridLayout_3.setObjectName("gridLayout_3")
+
+        self.gridLayout_3.addWidget(
+            self.view, 0, 0, 3, 1, alignment=QtCore.Qt.AlignLeft)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_2.setSizeConstraint(QtWidgets.QLayout.SetMinimumSize)
+        self.verticalLayout_2.setSizeConstraint(
+            QtWidgets.QLayout.SetMaximumSize)
         self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lineEdit.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.lineEdit.sizePolicy().hasHeightForWidth())
         self.lineEdit.setSizePolicy(sizePolicy)
         self.lineEdit.setDragEnabled(True)
         self.lineEdit.setObjectName("lineEdit")
@@ -80,7 +94,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.pushButton.setObjectName("pushButton")
         self.horizontalLayout_2.addWidget(self.pushButton)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem1)
         self.label = QtWidgets.QLabel(self.centralwidget)
         font = QtGui.QFont()
@@ -102,18 +117,42 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setObjectName("label_2")
         self.horizontalLayout_3.addWidget(self.label_2)
-        spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem2 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.horizontalLayout_3.addItem(spacerItem2)
         self.lineEdit_2 = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit_2.setObjectName("lineEdit_2")
         self.horizontalLayout_3.addWidget(self.lineEdit_2)
+        self.listWidget = QtWidgets.QListWidget()
+
+        self.listWidget.setGeometry(QtCore.QRect(860, 230, 261, 241))
+        self.listWidget.setObjectName("listWidget")
+        self.item = QtWidgets.QListWidgetItem()
+        self.listWidget.addItem(self.item)
+        item = QtWidgets.QListWidgetItem()
+        self.listWidget.addItem(item)
+        item = QtWidgets.QListWidgetItem()
+        self.listWidget.addItem(item)
+        __sortingEnabled = self.listWidget.isSortingEnabled()
+
+        self.listWidget.setSortingEnabled(False)
+        # item = self.listWidget.item(0)
+        # self._translate = QtCore.QCoreApplication.translate
+        # self.item.setText(self._translate("MainWindow", "Source 1"))
+        # item = self.listWidget.item(1)
+        # item.setText(self._translate("MainWindow", "Source 2"))
+        # item = self.listWidget.item(2)
+        # item.setText(self._translate("MainWindow", "Source 3"))
+        self.verticalLayout_2.addLayout(self.horizontalLayout_3)
+        self.verticalLayout_2.addWidget(self.listWidget)
         self.verticalLayout_2.addLayout(self.horizontalLayout_3)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.label_4 = QtWidgets.QLabel(self.centralwidget)
         self.label_4.setObjectName("label_4")
         self.horizontalLayout_4.addWidget(self.label_4)
-        spacerItem3 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem3 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.horizontalLayout_4.addItem(spacerItem3)
         self.lineEdit_4 = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit_4.setObjectName("lineEdit_4")
@@ -130,7 +169,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_4.setObjectName("line_4")
         self.verticalLayout_2.addWidget(self.line_4)
-        spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem4 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         self.verticalLayout_2.addItem(spacerItem4)
         self.label_8 = QtWidgets.QLabel(self.centralwidget)
         self.label_8.setObjectName("label_8")
@@ -148,18 +188,22 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.verticalLayout.addWidget(self.pushButton_8)
         self.verticalLayout_2.addLayout(self.verticalLayout)
         self.gridLayout_3.addLayout(self.verticalLayout_2, 0, 2, 1, 1)
-        spacerItem5 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem5 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_3.addItem(spacerItem5, 0, 1, 2, 1)
-        spacerItem6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem6 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout_3.addItem(spacerItem6, 1, 0, 1, 1)
-        # self.view = QtWidgets.QGraphicsView(self.centralwidget)
-        self.gridLayout_3.addWidget(self.view)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        # self.graphicsView_2 = QtWidgets.QGraphicsView(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(40)
         sizePolicy.setVerticalStretch(0)
-        
-        self.gridLayout_3.addWidget(self.view, 0, 0, 3, 1)
-        self.gridLayout_4.addLayout(self.gridLayout_3, 2, 0, 3, 1)
+        # sizePolicy.setHeightForWidth(self.graphicsView_2.sizePolicy().hasHeightForWidth())
+        # self.graphicsView_2.setSizePolicy(sizePolicy)
+        # self.graphicsView_2.setObjectName("graphicsView_2")
+        # self.gridLayout_3.addWidget(self.graphicsView_2, 0, 0, 1, 1)
+        self.gridLayout_4.addLayout(self.gridLayout_3, 2, 0, 1, 1)
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
         font = QtGui.QFont()
         font.setFamily("Yu Gothic UI Semibold")
@@ -172,7 +216,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.gridLayout_4.addWidget(self.label_3, 1, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1036, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1151, 26))
         self.menubar.setObjectName("menubar")
         self.menufile = QtWidgets.QMenu(self.menubar)
         self.menufile.setObjectName("menufile")
@@ -184,8 +228,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         MainWindow.setStatusBar(self.statusbar)
         self.menubar.addAction(self.menufile.menuAction())
         self.menubar.addAction(self.menusettings.menuAction())
-
-        
         self.pushButton.clicked.connect(self.load_file)
         self.pushButton_2.clicked.connect(self.save_pos)
         self.retranslateUi(MainWindow)
@@ -199,90 +241,109 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.label_2.setText(_translate("MainWindow", "X (East):"))
         self.label_4.setText(_translate("MainWindow", "Y (North):"))
         self.pushButton_2.setText(_translate("MainWindow", "Save Positions"))
-        self.label_8.setText(_translate("MainWindow", "(Upon Selection of a line)"))
+        self.label_8.setText(_translate(
+            "MainWindow", "(Upon Selection of a line)"))
         self.pushButton_3.setText(_translate("MainWindow", "Delete"))
         self.pushButton_7.setText(_translate("MainWindow", "Undo"))
         self.pushButton_8.setText(_translate("MainWindow", "Save New File"))
         self.label_3.setText(_translate("MainWindow", "RFI Localization"))
         self.menufile.setTitle(_translate("MainWindow", "file"))
         self.menusettings.setTitle(_translate("MainWindow", "settings"))
-        
-        
-    def plotfile(self, pos_dict,delay_dict):
-        norm = Normalize(vmin=np.min(delay_dict['amplitude']), vmax=np.max(delay_dict['amplitude']))
-        
-        self.i=0
-        l=len(pos_dict)
-        
-        for i in range(0,l):   #scatter plot for antennas
-            self.axes.scatter(pos_dict[i][0], pos_dict[i][1], color='g', marker='^')
-            
+
+    def plotfile(self, pos_dict, delay_dict):
+        norm = Normalize(vmin=np.min(
+            delay_dict['amplitude']), vmax=np.max(delay_dict['amplitude']))
+
+        self.i = 0
+        l = len(pos_dict)
+
+        for i in range(0, l):  # scatter plot for antennas
+            self.axes.scatter(
+                pos_dict[i][0], pos_dict[i][1], color='g', marker='^')
+
         l = len(delay_dict)
-        for i in range(0,l):
-            baseline=delay_dict['baseline'][i]
-            ant2=(baseline - 65536) % 2048 - 1
-            ant1 = ((baseline - 65536) - (ant2 + 1))//2048 -1
-            xyp=self.hyperbola(delay_dict['delay'][i],pos_dict[ant1][0],pos_dict[ant1][1],pos_dict[ant2][0],pos_dict[ant2][1],15000,500) #self,delay_s, x0,x1,y0,y1, range, pts
+        for i in range(0, l):
+            baseline = delay_dict['baseline'][i]
+            ant2 = (baseline - 65536) % 2048 - 1
+            ant1 = ((baseline - 65536) - (ant2 + 1))//2048 - 1
+            xyp = self.hyperbola(delay_dict['delay'][i], pos_dict[ant1][0], pos_dict[ant1][1], pos_dict[ant2]
+                                 [0], pos_dict[ant2][1], 15000, 1000)  # self,delay_s, x0,x1,y0,y1, range, pts
             strength = delay_dict['amplitude'][i]
-            self.axes.plot(xyp[0, :],xyp[1, :],c=viridis_r(norm(strength)), lw=1, linestyle='solid',picker=5, label=i,pickradius=5)
-        self.view.figure.canvas.draw()     
-         
+            self.axes.plot(xyp[0, :], xyp[1, :], c=viridis_r(
+                norm(strength)), lw=1, linestyle='solid', picker=5, label=i, pickradius=5)
+        self.view.figure.canvas.draw()
+
         def on_press(event):
-            event.artist.set_color("blue") #for greying out the selected lines
-            event.artist.set_picker(True) #cannot be selected again
+            # for greying out the selected lines
+            event.artist.set_color("blue")
+            event.artist.set_picker(True)  # cannot be selected again
             self.view.figure.canvas.draw()
 
-               
-        
         def on_pick(event):
-            
+
             self.lineEdit_2.clear()
             self.lineEdit_4.clear()
-            
+            self.a.append(event.artist.get_label())
             # print (event.artist.get_label(),"clicked")
             # event.artist.set_visible(not event.artist.get_visible())    (for making selected lines invisible)
-            event.artist.set_color("lightgrey") #for greying out the selected lines
+            # for greying out the selected lines
+            event.artist.set_color("lightgrey")
             event.artist.set_alpha(0.5)
-            event.artist.set_picker(False) #cannot be selected again
+            event.artist.set_picker(False)  # cannot be selected again
             self.view.figure.canvas.draw()
-        
-       
-            
-                
 
-        self.view.figure.canvas.mpl_connect('pick_event', on_pick)  
-        self.view.figure.canvas.mpl_connect('key_press_event', on_press)      
-        
-        
-        def add_evt(event):
-            self.a.append(event.artist.get_label())
+        self.view.figure.canvas.mpl_connect('pick_event', on_pick)
+        self.view.figure.canvas.mpl_connect('key_press_event', on_press)
+
+        # def add_evt(event):
+        #     self.a.append(event.artist.get_label())
     # print(a)
-        def groupbylist(event): 
-            if (self.view.figure.canvas.cursor().shape())==0:
-                
-                self.print_source=[]
-                
-                self.i=self.i+1
-                
-                print ("source",self.i,"->",self.a)
-                self.sourceList.extend(["source",self.i,"->",self.print_source,"position:",round(event.xdata,2), round(event.ydata,2)])
-                
-                self.localList.append(self.sourceList)
-                self.finalList=self.localList
-                self.sourceList=[]
-                self.print_source+=(self.a)
-                # print(self.localList)
-                
-                print("position:",round(event.xdata,2),",", round(event.ydata,2))
-                self.lineEdit_2.insert(str(round(event.xdata,2)))
-                self.lineEdit_4.insert(str(round(event.ydata,2)))
-                
-                self.a.clear()
-        self.view.figure.canvas.mpl_connect('pick_event',add_evt)
-        self.view.figure.canvas.mpl_connect('button_release_event',groupbylist)
-    
+        def groupbylist(event):
+            list_count = 0
+            if (self.view.figure.canvas.cursor().shape()) == 0:
 
-    
+                self.print_source = []
+
+                self.i = self.i+1
+
+                print("source", self.i, "->", self.a)
+                self.sourceList.extend(["source", self.i, "->", self.print_source,
+                                       "position:", round(event.xdata, 2), round(event.ydata, 2)])
+
+                self.finalList = self.localList
+                self.sourceList = []
+                self.print_source += (self.a)
+                self.localList.append(self.sourceList)
+                print("position:", round(event.xdata, 2),
+                      ",", round(event.ydata, 2))
+                self.lineEdit_2.insert(str(round(event.xdata, 2)))
+                self.lineEdit_4.insert(str(round(event.ydata, 2)))
+                self.a.clear()
+                # print(self.localList)
+                str_source_list = ""
+                self._translate = QtCore.QCoreApplication.translate
+
+                # traverse in the string
+                for ele in self.print_source:
+                    str_source_list = str_source_list + ','+ele
+                tuple_list = (str(self.i), "->", str(str_source_list))
+                str_tuple = ''
+                for item in tuple_list:
+                    str_tuple = str_tuple + item
+                print(str_tuple)
+                self.item = QtWidgets.QListWidgetItem()
+                self.item = self.listWidget.item(list_count)
+                self.item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable |
+                                   QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+                self.listWidget.addItem(item)
+
+                # self.item.setText(("MainWindow", str(str_tuple)))
+                self.item.setText(self._translate("MainWindow", (str_tuple)))
+                list_count = list_count+1
+        # self.view.figure.canvas.mpl_connect('pick_event',add_evt)
+        self.view.figure.canvas.mpl_connect(
+            'button_release_event', groupbylist)
+
     def save_pos(self):
         dialog = QtWidgets.QFileDialog()
         dialog.setWindowTitle("Save File")
@@ -290,33 +351,30 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         dialog.setAcceptMode(QtWidgets.QFileDialog.AcceptSave)
         dialog.setOption(QtWidgets.QFileDialog.DontConfirmOverwrite, True)
         dialog.setNameFilters(
-                ["Text files (*.txt)", "Excel sheets (*.xlsx)"])
+            ["Text files (*.txt)", "Excel sheets (*.xlsx)"])
         dialog.setDefaultSuffix(".txt")
         dialog.exec_()
-        
+
         if dialog.selectedFiles():
-                # MODIFIED
-                fileType = (dialog.selectedFiles()[0]).split(".")[-1]
-                
-                if fileType == "txt":
-                    try:
-                        file = open(dialog.selectedFiles()[0], 'r')
-                        writeData = file.read()
-                        file.close()
-                    except FileNotFoundError:
-                        
-                        writeData = self.finalList
-                file = open(dialog.selectedFiles()[0], 'w')
-                file.write(str(writeData))
-                file.close()
+
+            fileType = (dialog.selectedFiles()[0]).split(".")[-1]
+
+            if fileType == "txt":
+                try:
+                    file = open(dialog.selectedFiles()[0], 'r')
+                    writeData = file.read()
+                    file.close()
+                except FileNotFoundError:
+
+                    writeData = self.finalList
+            file = open(dialog.selectedFiles()[0], 'w')
+            file.write(json.dumps(writeData))
+            file.close()
         self.print_source.clear()
-        
-        
-        
-        
+
     def load_file(self):
         options = QtWidgets.QFileDialog.Options()
-        
+
         options = options | QtWidgets.QFileDialog.DontUseNativeDialog
         self.file_path = QtWidgets.QFileDialog.getOpenFileName(
             self, "Choose File", "",
@@ -333,26 +391,25 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 print(data.files)
                 # print(data['delays'][0:10])
                 # print(data['positions'][0])
-                
+
                 # print(data_dict["positions"])
                 # print(data_dict["delay"])
                 # self.plotfile()
-                self.plotfile(data["positions"],data["delays"])
+                self.plotfile(data["positions"], data["delays"])
             # print(data_dict["delays"]["baselines"][0])
-            
-            
-    def hyperbola(self,delay_s, x0,x1,y0,y1, range, pts):
+
+    def hyperbola(self, delay_s, x0, x1, y0, y1, range, pts):
         """
         Plots a hyperbola with positions p0 = (x0, y0) and p1 = (x1, y1) as the foci.
         The delay is defined in seconds of light travel time such that positive --> closer to p0.
         """
         # x0, y0 = p0  # position in meteres
         # x1, y1 = p1  # position in meters
-        speed_of_l=2.99792458e8
+        speed_of_l = 2.99792458e8
         angle = np.pi - np.arctan2((y1 - y0), (x1 - x0))
 
         c = np.sqrt((x0 - x1) ** 2 + (y0 - y1) ** 2) / 2
-        a = delay_s *speed_of_l/ 2  # convert from seconds to meters
+        a = delay_s * speed_of_l / 2  # convert from seconds to meters
 
         xy = cartesian_hyperbola(c, a, range, pts)
 
@@ -360,15 +417,21 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         xy[0, :] -= c
 
         # rotate to p1 -> p0 angle.
-        rot = np.array([[np.cos(angle), np.sin(angle)], [-np.sin(angle), np.cos(angle)]])
-        xyp = np.matmul(rot, xy)
+        rot = np.array([[np.cos(angle), np.sin(angle)],
+                       [-np.sin(angle), np.cos(angle)]])
+
+        xyp = np.zeros_like(xy)
+
+        xyp[0:2, :] = np.matmul(rot, xy[0:2, :])
+
+        xyp[2, :] = xy[2, :]  # copy weights
 
         # shift origin to p0
         xyp[0, :] += x0
         xyp[1, :] += y0
+
         return xyp
         # print(xyp)
-        
 
 
 def cartesian_hyperbola(c, a, range, pts):
@@ -378,10 +441,11 @@ def cartesian_hyperbola(c, a, range, pts):
     y = np.linspace(-range, range, pts, endpoint=True)
     b = np.sqrt(abs(c ** 2 - a ** 2))
     x = a * np.sqrt(1 + y ** 2 / b ** 2)
-    return np.vstack([x, y])
-    
-    
-            
+    d1 = np.sqrt(y**2+(x-c)**2)  # distance from one focus
+    d2 = np.sqrt(y**2+(x+c)**2)  # distance from other focus
+    scaling_factor = 25E6  # assume a typical distance scale of 5000m
+    w = scaling_factor/(d1*d2)
+    return np.vstack([x, y, w])
 
 
 if __name__ == "__main__":

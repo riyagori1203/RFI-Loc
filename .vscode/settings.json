@@ -1,0 +1,5 @@
+{
+  "python.analysis.extraPaths": [
+    "./pyuvdata-2.2.9/build/lib.win-amd64-cpython-310"
+  ]
+}

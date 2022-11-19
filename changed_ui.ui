@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1163</width>
+    <height>668</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>4</x>
+      <y>9</y>
+      <width>1171</width>
+      <height>761</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string>RFI source </string>
+     </attribute>
+     <widget class="QGraphicsView" name="graphicsView_2">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>10</y>
+        <width>821</width>
+        <height>581</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_8">
+      <property name="geometry">
+       <rect>
+        <x>850</x>
+        <y>570</y>
+        <width>281</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Save New File</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>830</x>
+        <y>60</y>
+        <width>191</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>(Double click to select a point)</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_7">
+      <property name="geometry">
+       <rect>
+        <x>850</x>
+        <y>520</y>
+        <width>281</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Undo</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>858</x>
+        <y>170</y>
+        <width>91</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Y (North):</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>830</x>
+        <y>100</y>
+        <width>171</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>MS Sans Serif</family>
+        <pointsize>9</pointsize>
+        <weight>75</weight>
+        <italic>true</italic>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Intersection Positions</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_2">
+      <property name="geometry">
+       <rect>
+        <x>850</x>
+        <y>420</y>
+        <width>271</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Save Positions</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_4">
+      <property name="geometry">
+       <rect>
+        <x>960</x>
+        <y>170</y>
+        <width>151</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>858</x>
+        <y>140</y>
+        <width>91</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>X (East):</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_3">
+      <property name="geometry">
+       <rect>
+        <x>850</x>
+        <y>470</y>
+        <width>281</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Delete</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_2">
+      <property name="geometry">
+       <rect>
+        <x>960</x>
+        <y>140</y>
+        <width>151</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton">
+      <property name="geometry">
+       <rect>
+        <x>1020</x>
+        <y>20</y>
+        <width>93</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Open file</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>830</x>
+        <y>20</y>
+        <width>181</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="listWidget">
+      <property name="geometry">
+       <rect>
+        <x>860</x>
+        <y>230</y>
+        <width>261</width>
+        <height>121</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>Source 1 -&gt; [1,6,13,14]</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+       <property name="flags">
+        <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Source 2 -&gt; [2,5]</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Source 3 -&gt; [18,20,22,24,26]</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QPushButton" name="pushButton_5">
+      <property name="geometry">
+       <rect>
+        <x>860</x>
+        <y>360</y>
+        <width>121</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Add</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_10">
+      <property name="geometry">
+       <rect>
+        <x>1000</x>
+        <y>360</y>
+        <width>121</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Remove</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_2">
+     <attribute name="title">
+      <string>Delay Spectrum</string>
+     </attribute>
+     <widget class="QPushButton" name="pushButton_4">
+      <property name="geometry">
+       <rect>
+        <x>792</x>
+        <y>70</y>
+        <width>171</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>View Delay Spectrum</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinBox_3">
+      <property name="geometry">
+       <rect>
+        <x>740</x>
+        <y>40</y>
+        <width>141</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinBox_4">
+      <property name="geometry">
+       <rect>
+        <x>900</x>
+        <y>40</y>
+        <width>141</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="value">
+       <number>15</number>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinBox_5">
+      <property name="geometry">
+       <rect>
+        <x>740</x>
+        <y>160</y>
+        <width>141</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="value">
+       <number>15</number>
+      </property>
+     </widget>
+     <widget class="QGraphicsView" name="graphicsView_4">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>240</y>
+        <width>711</width>
+        <height>111</height>
+       </rect>
+      </property>
+      <property name="mouseTracking">
+       <bool>true</bool>
+      </property>
+      <property name="tabletTracking">
+       <bool>true</bool>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="dragMode">
+       <enum>QGraphicsView::NoDrag</enum>
+      </property>
+      <property name="resizeAnchor">
+       <enum>QGraphicsView::AnchorViewCenter</enum>
+      </property>
+      <property name="rubberBandSelectionMode">
+       <enum>Qt::ContainsItemBoundingRect</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_5">
+      <property name="geometry">
+       <rect>
+        <x>740</x>
+        <y>10</y>
+        <width>161</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>MS Sans Serif</family>
+        <pointsize>9</pointsize>
+        <weight>75</weight>
+        <italic>true</italic>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Baselines</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinBox_8">
+      <property name="geometry">
+       <rect>
+        <x>910</x>
+        <y>290</y>
+        <width>141</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="value">
+       <number>0</number>
+      </property>
+     </widget>
+     <widget class="QGraphicsView" name="graphicsView_3">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>120</y>
+        <width>711</width>
+        <height>111</height>
+       </rect>
+      </property>
+      <property name="mouseTracking">
+       <bool>true</bool>
+      </property>
+      <property name="tabletTracking">
+       <bool>true</bool>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="dragMode">
+       <enum>QGraphicsView::NoDrag</enum>
+      </property>
+      <property name="resizeAnchor">
+       <enum>QGraphicsView::AnchorViewCenter</enum>
+      </property>
+      <property name="rubberBandSelectionMode">
+       <enum>Qt::ContainsItemBoundingRect</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_6">
+      <property name="geometry">
+       <rect>
+        <x>740</x>
+        <y>130</y>
+        <width>161</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>MS Sans Serif</family>
+        <pointsize>9</pointsize>
+        <weight>75</weight>
+        <italic>true</italic>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Baselines</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_6">
+      <property name="geometry">
+       <rect>
+        <x>792</x>
+        <y>190</y>
+        <width>171</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>View Delay Spectrum</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_7">
+      <property name="geometry">
+       <rect>
+        <x>750</x>
+        <y>260</y>
+        <width>161</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>MS Sans Serif</family>
+        <pointsize>9</pointsize>
+        <weight>75</weight>
+        <italic>true</italic>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Baselines</string>
+      </property>
+     </widget>
+     <widget class="QGraphicsView" name="graphicsView">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>0</y>
+        <width>711</width>
+        <height>111</height>
+       </rect>
+      </property>
+      <property name="mouseTracking">
+       <bool>true</bool>
+      </property>
+      <property name="tabletTracking">
+       <bool>true</bool>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="dragMode">
+       <enum>QGraphicsView::NoDrag</enum>
+      </property>
+      <property name="resizeAnchor">
+       <enum>QGraphicsView::AnchorViewCenter</enum>
+      </property>
+      <property name="rubberBandSelectionMode">
+       <enum>Qt::ContainsItemBoundingRect</enum>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_9">
+      <property name="geometry">
+       <rect>
+        <x>802</x>
+        <y>320</y>
+        <width>171</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>View Delay Spectrum</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinBox_7">
+      <property name="geometry">
+       <rect>
+        <x>750</x>
+        <y>290</y>
+        <width>141</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="value">
+       <number>4</number>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinBox_6">
+      <property name="geometry">
+       <rect>
+        <x>900</x>
+        <y>160</y>
+        <width>141</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="value">
+       <number>4</number>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

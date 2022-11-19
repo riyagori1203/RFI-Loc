@@ -9,18 +9,61 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from itertools import groupby
-from re import A
-import matplotlib.pyplot as plt
+from matplotlib.collections import LineCollection
+import sys
+from PyQt5 import QtCore, QtGui, QtWidgets
 import numpy as np
-import pyqtgraph as pg
+from matplotlib.backends.qt_compat import QtWidgets
+from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
+from matplotlib.cm import viridis_r
+from matplotlib.colors import Normalize
+
+try:
+    import matplotlib.backends.backend_qtagg as qtbk
+    from matplotlib.backends.backend_qtagg import (
+        FigureCanvas, NavigationToolbar2QT as NavigationToolbar)
+except ModuleNotFoundError as e:
+    print("Could not import qtagg. Trying qt5agg")
+
+try:
+    import matplotlib.backends.backend_qt5agg as qtbk
+    from matplotlib.backends.backend_qt5agg import (
+        FigureCanvas, NavigationToolbar2QT as NavigationToolbar)
+except ModuleNotFoundError as e:
+    print("Could not import qt5agg. Quitting!")
+    sys.exit()
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.view = FigureCanvas(Figure(figsize=(8, 5.5)))
+        
+        self.toolbar=qtbk.NavigationToolbar2QT(self.view,self)
+        MainWindow.addToolBar(self.toolbar)
+        self.axes = self.view.figure.subplots()
+        self.axes.set_aspect('equal')
+        self.axes.set_box_aspect(1)
+        i=0
+        self.a=[]
+        self.print_source=[]
+        self.SPEED_OF_LIGHT = 2.99792458e8
+        self.filepath=""
+        self.sourceList=list()
+        self.finalList=list()
+        
+        self.localList=list()
+        
+        
     def setupUi(self, MainWindow):
         self.file_path=""
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1036, 600)
+        MainWindow.setFixedSize(1151, 679)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
+        MainWindow.setSizePolicy(sizePolicy)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.centralwidget)
@@ -29,6 +72,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.gridLayout_4.addItem(spacerItem, 0, 0, 1, 1)
         self.gridLayout_3 = QtWidgets.QGridLayout()
         self.gridLayout_3.setObjectName("gridLayout_3")
+        
+        self.gridLayout_3.addWidget(self.view, 0, 0, 3, 1, alignment=QtCore.Qt.AlignLeft)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setSizeConstraint(QtWidgets.QLayout.SetMaximumSize)
         self.verticalLayout_2.setSpacing(0)
@@ -98,7 +143,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_4.setObjectName("line_4")
         self.verticalLayout_2.addWidget(self.line_4)
-        spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         self.verticalLayout_2.addItem(spacerItem4)
         self.label_8 = QtWidgets.QLabel(self.centralwidget)
         self.label_8.setObjectName("label_8")
@@ -120,15 +165,14 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.gridLayout_3.addItem(spacerItem5, 0, 1, 2, 1)
         spacerItem6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout_3.addItem(spacerItem6, 1, 0, 1, 1)
-        self.graphicsView_2 = QtWidgets.QGraphicsView(self.centralwidget)
+        # self.graphicsView_2 = QtWidgets.QGraphicsView(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(40)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.graphicsView_2.sizePolicy().hasHeightForWidth())
-        self.graphicsView_2.setSizePolicy(sizePolicy)
-        self.graphicsView_2.setObjectName("graphicsView_2")
-        self.graphicsView_2 = pg.PlotWidget()
-        self.gridLayout_3.addWidget(self.graphicsView_2, 0, 0, 1, 1)
+        # sizePolicy.setHeightForWidth(self.graphicsView_2.sizePolicy().hasHeightForWidth())
+        # self.graphicsView_2.setSizePolicy(sizePolicy)
+        # self.graphicsView_2.setObjectName("graphicsView_2")
+        # self.gridLayout_3.addWidget(self.graphicsView_2, 0, 0, 1, 1)
         self.gridLayout_4.addLayout(self.gridLayout_3, 2, 0, 1, 1)
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
         font = QtGui.QFont()
@@ -142,7 +186,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.gridLayout_4.addWidget(self.label_3, 1, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1036, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1151, 26))
         self.menubar.setObjectName("menubar")
         self.menufile = QtWidgets.QMenu(self.menubar)
         self.menufile.setObjectName("menufile")
@@ -154,9 +198,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         MainWindow.setStatusBar(self.statusbar)
         self.menubar.addAction(self.menufile.menuAction())
         self.menubar.addAction(self.menusettings.menuAction())
-
-        
         self.pushButton.clicked.connect(self.load_file)
+        self.pushButton_2.clicked.connect(self.save_pos)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -177,55 +220,188 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.menusettings.setTitle(_translate("MainWindow", "settings"))
         
         
+    def plotfile(self, pos_dict,delay_dict):
+        norm = Normalize(vmin=np.min(delay_dict['amplitude']), vmax=np.max(delay_dict['amplitude']))
+        self.i=0
+        l=len(pos_dict)
         
-    def plotfile(self):
-        x1=[0,0,1]
-        y1=[0,1,0]
-        x = np.linspace(0, 10, 100)
-        i=0
-        fig, ax = plt.subplots()
-        self.graphicsView_2.plot(0*x, 0 * x + x, picker=5, label="a")
-        self.graphicsView_2.plot(1*x, 1 * x + x, picker=5, label="b")
-        self.graphicsView_2.plot(2*x, x + x, picker=5, label="c")
-        self.graphicsView_2.plot(x*x, 0 * x + x, picker=5, label="d")
-        self.graphicsView_2.plot(x + x, picker=5, label="e")
-        self.graphicsView_2.plot(x, picker=5, label="f")
-        self.graphicsView_2.plot(x, 0 * x + x, picker=5, label="g") 
-        self.graphicsView_2.plot(x1,y1)
-        a=[]      
-        # fig, ax = plt.subplots()
-        # self.graphicsView_2.mouseDoubleClickEvent.connect(self.)
-        self.sigMouseClicked.connect(self.mouse_clicked)
-        # fig.canvas.callbacks.connect('pick_event',add_evt)
-        # fig.canvas.callbacks.connect('button_release_event',groupbylist)
+        for i in range(0,l):   #scatter plot for antennas
+            self.axes.scatter(pos_dict[i][0], pos_dict[i][1], color='g', marker='^')
+            
+        l = len(delay_dict)
+        for i in range(0,l):
+            baseline=delay_dict['baseline'][i]
+            ant2=(baseline - 65536) % 2048 - 1
+            ant1 = ((baseline - 65536) - (ant2 + 1))//2048 -1
+            xyp=self.hyperbola(delay_dict['delay'][i],pos_dict[ant1][0],pos_dict[ant1][1],pos_dict[ant2][0],pos_dict[ant2][1],15000,500) #self,delay_s, x0,x1,y0,y1, range, pts
+            strength = delay_dict['amplitude'][i]
+            self.axes.plot(xyp[0, :],xyp[1, :],c=viridis_r(norm(strength)), lw=1, linestyle='solid',picker=5, label=i,pickradius=5)
+        self.view.figure.canvas.draw()     
+         
+        def on_press(event):
+            event.artist.set_color("blue") #for greying out the selected lines
+            event.artist.set_picker(True) #cannot be selected again
+            self.view.figure.canvas.draw()
+
+               
+        
+        def on_pick(event):
+            
+            self.lineEdit_2.clear()
+            self.lineEdit_4.clear()
+            self.a.append(event.artist.get_label())
+            # print (event.artist.get_label(),"clicked")
+            # event.artist.set_visible(not event.artist.get_visible())    (for making selected lines invisible)
+            event.artist.set_color("lightgrey") #for greying out the selected lines
+            event.artist.set_alpha(0.5)
+            event.artist.set_picker(False) #cannot be selected again
+            self.view.figure.canvas.draw()
+        
+       
+            
+                
+        # def on_plot_hover(event):
+        #     # Iterating over each data member plotted
+        #     for curve in self.view.figure.canvas.get_lines():
+        #     # Searching which data member corresponds to current mouse position
+        #         if curve.contains(event)[0]:
+        #             print("over %s" % event.artist.get_label())
+            
+        # self.view.figure.canvas.mpl_connect('motion_notify_event', on_plot_hover)  
+        self.view.figure.canvas.mpl_connect('pick_event', on_pick)  
+        self.view.figure.canvas.mpl_connect('key_press_event', on_press)      
+        
+        
+        # def add_evt(event):
+        #     self.a.append(event.artist.get_label())
+    # print(a)
+        def groupbylist(event): 
+            if (self.view.figure.canvas.cursor().shape())==0:
+                
+                self.print_source=[]
+                
+                self.i=self.i+1
+                
+                print ("source",self.i,"->",self.a)
+                self.sourceList.extend(["source",self.i,"->",self.print_source,"position:",round(event.xdata,2), round(event.ydata,2)])
+                
+                self.localList.append(self.sourceList)
+                self.finalList=self.localList
+                self.sourceList=[]
+                self.print_source+=(self.a)
+                # print(self.localList)
+                
+                print("position:",round(event.xdata,2),",", round(event.ydata,2))
+                self.lineEdit_2.insert(str(round(event.xdata,2)))
+                self.lineEdit_4.insert(str(round(event.ydata,2)))
+                
+                self.a.clear()
+        # self.view.figure.canvas.mpl_connect('pick_event',add_evt)
+        self.view.figure.canvas.mpl_connect('button_release_event',groupbylist)
     
-    def mouse_clicked(self, mouseClickEvent):
-        try:
-            if mouseClickEvent.button() == QtCore.Qt.LeftButton:
-                print("works")
-        except (NameError, IndexError, TypeError, ValueError):
-            pass
+
     
-      
+    def save_pos(self):
+        dialog = QtWidgets.QFileDialog()
+        dialog.setWindowTitle("Save File")
+        dialog.setViewMode(QtWidgets.QFileDialog.Detail)
+        dialog.setAcceptMode(QtWidgets.QFileDialog.AcceptSave)
+        dialog.setOption(QtWidgets.QFileDialog.DontConfirmOverwrite, True)
+        dialog.setNameFilters(
+                ["Text files (*.txt)", "Excel sheets (*.xlsx)"])
+        dialog.setDefaultSuffix(".txt")
+        dialog.exec_()
+        
+        if dialog.selectedFiles():
+                
+                fileType = (dialog.selectedFiles()[0]).split(".")[-1]
+                
+                if fileType == "txt":
+                    try:
+                        file = open(dialog.selectedFiles()[0], 'r')
+                        writeData = file.read()
+                        file.close()
+                    except FileNotFoundError:
+                        
+                        writeData = self.finalList
+                file = open(dialog.selectedFiles()[0], 'w')
+                file.write(str(writeData))
+                file.close()
+        self.print_source.clear()
+        
+        
+        
+        
     def load_file(self):
         options = QtWidgets.QFileDialog.Options()
-        self.plotfile()
+        
         options = options | QtWidgets.QFileDialog.DontUseNativeDialog
         self.file_path = QtWidgets.QFileDialog.getOpenFileName(
             self, "Choose File", "",
-            "Json files (*.json)",
+            "npz files (*.npz)",
             options=options)
         if self.file_path[0]:
-            self.graphicsView.clear()
-            self.fileLineEdit.clear()
-            self.fileLineEdit.insert(self.file_path[0])
+            self.lineEdit.clear()
+            self.lineEdit.insert(self.file_path[0])
 
             # MODIFIED
             fileType = (self.file_path[0]).split(".")[-1]
-            if fileType == "txt":
-                self.read_data_textfile(self.file_path[0])
-            elif fileType in ["xlsx", "xls"]:
-                self.read_data_xcelfile(self.file_path[0])
+            if fileType == "npz":
+                data = np.load(self.file_path[0])
+                print(data.files)
+                
+                print(data['positions'])
+                
+                # print(data_dict["positions"])
+                # print(data_dict["delay"])
+                # self.plotfile()
+                self.plotfile(data["positions"],data["delays"])
+            # print(data_dict["delays"]["baselines"][0])
+            
+            
+    def hyperbola(self,delay_s, x0,x1,y0,y1, range, pts):
+        """
+        Plots a hyperbola with positions p0 = (x0, y0) and p1 = (x1, y1) as the foci.
+        The delay is defined in seconds of light travel time such that positive --> closer to p0.
+        """
+        # x0, y0 = p0  # position in meteres
+        # x1, y1 = p1  # position in meters
+        speed_of_l=2.99792458e8
+        angle = np.pi - np.arctan2((y1 - y0), (x1 - x0))
+
+        c = np.sqrt((x0 - x1) ** 2 + (y0 - y1) ** 2) / 2
+        a = delay_s *speed_of_l/ 2  # convert from seconds to meters
+
+        xy = cartesian_hyperbola(c, a, range, pts)
+
+        # shift the focus from (c, 0) to origin.
+        xy[0, :] -= c
+
+        # rotate to p1 -> p0 angle.
+        rot = np.array([[np.cos(angle), np.sin(angle)], [-np.sin(angle), np.cos(angle)]])
+        xyp = np.matmul(rot, xy)
+
+        # shift origin to p0
+        xyp[0, :] += x0
+        xyp[1, :] += y0
+        # lc = LineCollection(x0,y0)
+        # ax = plt.subplots()
+        # ax.add_collection(lc)
+        # ax.set_title('Line collection with masked arrays')
+        # plt.show()
+        return xyp
+        # print(xyp)
+        
+
+
+def cartesian_hyperbola(c, a, range, pts):
+    """
+    Returns a hyperbola around the focus at (c,0). The other focus is at (-c,0)
+    """
+    y = np.linspace(-range, range, pts, endpoint=True)
+    b = np.sqrt(abs(c ** 2 - a ** 2))
+    x = a * np.sqrt(1 + y ** 2 / b ** 2)
+    return np.vstack([x, y])
 
 
 if __name__ == "__main__":
