@@ -12,6 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
+from matplotlib.collections import LineCollection
 import numpy as np
 from matplotlib.backends.qt_compat import QtWidgets
 from matplotlib.figure import Figure
@@ -239,7 +240,13 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             ant1 = ((baseline - 65536) - (ant2 + 1))//2048 -1
             xyp=self.hyperbola(delay_dict['delay'][i],pos_dict[ant1][0],pos_dict[ant1][1],pos_dict[ant2][0],pos_dict[ant2][1],15000,1000) #self,delay_s, x0,x1,y0,y1, range, pts
             strength = delay_dict['amplitude'][i]
-            self.axes.plot(xyp[0, :],xyp[1, :],c=viridis_r(norm(strength)), lw=1, linestyle='solid',picker=5, label=i,pickradius=5)
+            self.axes.plot(xyp[0, :],xyp[1, :], alpha=0,picker=5, label=i,pickradius=5)
+            lwidths=1+(xyp[2,:])
+            points = np.array([xyp[0,:],xyp[1,:]]).T.reshape(-1, 1, 2)
+            segments = np.concatenate([points[:-1], points[1:]], axis=1)
+            lc = LineCollection(segments, linewidths=lwidths,color=viridis_r(norm(strength)),norm=plt.Normalize(0, 10))
+            self.axes.add_collection(lc)
+            # self.axes.scatter(xyp[0, :],xyp[1, :], s=(xyp[2,:])**0.5, c=viridis_r(norm(strength)), linestyle='solid',picker=5, label=i,pickradius=5)
         self.view.figure.canvas.draw()     
          
         def on_press(event):
@@ -402,7 +409,8 @@ def cartesian_hyperbola(c, a, range, pts):
     d1 = np.sqrt(y**2+(x-c)**2) # distance from one focus
     d2 = np.sqrt(y**2+(x+c)**2) # distance from other focus
     scaling_factor = 25E6 # assume a typical distance scale of 5000m
-    w = scaling_factor/(d1*d2)
+    w = (d1*d2)/scaling_factor
+    # w=scaling_factor/(d1*d2)
     return np.vstack([x, y, w])
 
 
