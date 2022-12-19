@@ -18,7 +18,7 @@ from matplotlib.backends.qt_compat import QtWidgets
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 from matplotlib.cm import viridis_r
-from matplotlib.colors import Normalize
+from matplotlib.colors import Normalize, LogNorm
 import json
 
 try:
@@ -244,7 +244,16 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             lwidths=1+(xyp[2,:])
             points = np.array([xyp[0,:],xyp[1,:]]).T.reshape(-1, 1, 2)
             segments = np.concatenate([points[:-1], points[1:]], axis=1)
-            lc = LineCollection(segments, linewidths=lwidths,color=viridis_r(norm(strength)),norm=plt.Normalize(0, 10))
+
+            #code to calculate the segment weights 
+            segment_weights = np.convolve(xyp[2,:], np.ones(2)/2, 'valid')
+            alpha_norm = LogNorm(vmin=np.min(1/segment_weights), vmax=np.max(1/segment_weights))
+            
+            colors = viridis_r(norm(strength*np.ones(len(segments))))
+            colors[:,3] = alpha_norm(1/segment_weights)
+
+            lc = LineCollection(segments, linewidths=lwidths,color=colors,norm=plt.Normalize(0, 10))
+
             self.axes.add_collection(lc)
             # self.axes.scatter(xyp[0, :],xyp[1, :], s=(xyp[2,:])**0.5, c=viridis_r(norm(strength)), linestyle='solid',picker=5, label=i,pickradius=5)
         self.view.figure.canvas.draw()     
