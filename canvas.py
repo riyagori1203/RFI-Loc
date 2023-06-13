@@ -228,18 +228,31 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
         self.i=0
         l=len(pos_dict)
-        
-        for i in range(0,l):   #scatter plot for antennas
-            self.axes.scatter(pos_dict[i][0], pos_dict[i][1], color='g', marker='^')
+
+        ants_used = []
             
         l = len(delay_dict)
         for i in range(0,l):
             baseline=delay_dict['baseline'][i]
-            ant2=(baseline - 65536) % 2048 - 1
-            ant1 = ((baseline - 65536) - (ant2 + 1))//2048 -1
-            xyp=self.hyperbola(delay_dict['delay'][i],pos_dict[ant1][0],pos_dict[ant1][1],pos_dict[ant2][0],pos_dict[ant2][1],15000,1000) #self,delay_s, x0,x1,y0,y1, range, pts
+            ant2=(baseline - 65536) % 2048
+            ant1 = ((baseline - 65536) - (ant2))//2048 
+            xyp=self.hyperbola(delay_dict['delay'][i],
+                               pos_dict[ant1][0],
+                               pos_dict[ant1][1],
+                               pos_dict[ant2][0],
+                               pos_dict[ant2][1],
+                               15000,1000) #self,delay_s, x0,x1,y0,y1, range, pts
             strength = delay_dict['amplitude'][i]
-            self.axes.plot(xyp[0, :],xyp[1, :],c=viridis_r(norm(strength)), lw=1, linestyle='solid',picker=5, label=i,pickradius=5)
+            self.axes.plot(xyp[0, :],xyp[1, :],
+                           c=viridis_r(norm(strength)), 
+                           lw=1, linestyle='solid',
+                           picker=5, label=i,pickradius=5)
+        
+        # plot only the antennas used.
+        unique_ants = np.unique(ants_used)
+        for i in unique_ants:   #scatter plot for antennas
+            self.axes.scatter(pos_dict[i][0], pos_dict[i][1], color='g', marker='^')
+
         self.view.figure.canvas.draw()     
          
         def on_press(event):
